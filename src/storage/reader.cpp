@@ -4,11 +4,9 @@ void storage::Reader::loadData(const std::string& fileName) {
     std::ifstream handler(fileName, std::ios::in | std::ios::binary);
 
     storage_model::Metadata metadata;
-    
     orders.clear();
     buyRecords.clear();
     sellRecords.clear();
-
     handler.read((char *)&metadata, sizeof(storage_model::Metadata));
 
     buyRecords.resize(metadata.buyCnt);
@@ -32,7 +30,7 @@ void storage::Reader::loadData(const std::string& fileName) {
     }
 }
 
-model::SideRecords  storage::Reader::getRecords() {
+model::SideRecords storage::Reader::getRecords() {
     model::SideRecords records;
     for(auto sr: buyRecords) {
         records[model::Side::BUY][sr.price] = sr.qty;
@@ -43,8 +41,25 @@ model::SideRecords  storage::Reader::getRecords() {
     }
     return records;
 }
-std::vector<model::OrderData>  storage::Reader::getOrders() {
+std::vector<model::OrderData>  storage::Reader::getOrders(std::string& symbol) {
+     std::unordered_map<char, model::Category> catergoryMap = {
+        {'T', model::Category::TRADE},
+        {'N', model::Category::NEW},
+        {'C', model::Category::CANCEL}
+    };
+    std::unordered_map<char, model::Side> sideMap = {
+        {'S', model::Side::SELL},
+        {'B', model::Side::BUY}
+    };
 
+    std::vector<model::OrderData> ans;
+
+    for(auto order: orders) {
+        model::OrderData loadedOrder(symbol, order.timestamp, order.id,sideMap[order.side], 
+                                                    catergoryMap[order.category], order.qty, order.price);
+        ans.push_back(loadedOrder);
+    }
+    return ans;
 }
 
 storage_model::LastTradeRecord  storage::Reader::getLastTrade() {

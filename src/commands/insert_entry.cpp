@@ -1,5 +1,9 @@
 #include "../../include/commands.hpp"
 
-void InsertEntryCommand::execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx) {
-        
+
+void InsertEntryCommand::execute() {
+    std::vector<model::OrderData> orderToInsert{newEntry};
+    mergeStateAndWrite(config,newEntry.timestamp, newEntry.timestamp + 1, orderToInsert);
 }
+
+

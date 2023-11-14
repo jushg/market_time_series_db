@@ -1,7 +1,11 @@
+#ifndef STORAGE_HPP
+#define STORAGE_HPP
+
 #include <string>
 #include <fstream>
 #include <set>
 #include <vector>
+#include <iostream>
 #include <unordered_map>
 #include "./storage_models.hpp"
 #include "./models.hpp"
@@ -15,7 +19,7 @@ namespace storage {
     public:
         TimeIndex(std::string& symbol, std::string& rootDir);
         void loadIdx();
-        void buildIdxWithFile() ;
+        void reloadIdxFromFile() ;
         void buildIdxFromData() ;
         bool isEmpty() ;
         std::vector<uint64_t> findIndexesInRange(const uint64_t startTime, const uint64_t endTime);
@@ -35,16 +39,21 @@ namespace storage {
         void loadData(const std::string& fileName);
 
         model::SideRecords getRecords();
-        std::vector<model::OrderData> getOrders();
-
+        std::vector<model::OrderData> getOrders(std::string& symbol);
         storage_model::LastTradeRecord getLastTrade();
 
     };
 
-    void write(std::ofstream &handler,model::OrderBook& book,  std::vector<model::OrderData>& orders) ;
+    void write(std::ofstream &handler,model::OrderBook& book,  std::vector<model::OrderData>& orders, storage_model::LastTradeRecord& lastTrade) ;
     void writeMetadata(std::ofstream &handler,storage_model::Metadata& metadata );
+    void writeLastTrade(std::ofstream &handler,storage_model::LastTradeRecord& lastTrade );
+
     void writeBaseState(std::ofstream &handler, model::SideRecords& records) ;
     void writeOrder(std::ofstream &handler, std::vector<model::OrderData>& orders) ;
 
+    void deleteDataAt(std::string& fileName);
+
 }
+#endif
+
 

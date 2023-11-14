@@ -1,26 +1,24 @@
 #include "../../include/commands.hpp"
 
-
-
-void QueryRangeCommand::execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx) {
+void QueryRangeCommand::execute() {
     storage::Reader reader = storage::Reader();
-    auto timeRangeStarts = timeIdx->findIndexesInRange(startTime,endTime);
+    auto timeRangeStarts = config.timeIdx->findIndexesInRange(startTime,endTime);
     if(timeRangeStarts.empty()) return;
     uint64_t curTime = startTime;
 
     for(int i = 0; i < timeRangeStarts.size(); i++) {
 
-        auto fileName = storage::getSymbolDirectory(rootDir, symbol) + "/" + std::to_string(timeRangeStarts[i]);
+        auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timeRangeStarts[i]);
 
         reader.loadData(fileName);
         auto baseRecords = reader.getRecords();
-        auto orders = reader.getOrders();
+        auto orders = reader.getOrders(config.symbol);
         auto lastTrade = reader.getLastTrade();
         model::OrderBook book(baseRecords);
 
         for(auto order: orders) {
             if(order.timestamp > curTime) {
-                QueryResult result(symbol, curTime, lastTrade.qty, lastTrade.price, book);
+                QueryResult result(config.symbol, curTime, lastTrade.qty, lastTrade.price, book);
                 result.printResult();
                 curTime += granularity;
             }
@@ -34,7 +32,7 @@ void QueryRangeCommand::execute(std::string& rootDir, std::string& symbol, std::
         }
 
         if(i == timeRangeStarts.size() - 1 && curTime <= endTime) {
-            QueryResult result(symbol, curTime, lastTrade.qty, lastTrade.price, book);
+            QueryResult result(config.symbol, curTime, lastTrade.qty, lastTrade.price, book);
             result.printResult();
         }
     }

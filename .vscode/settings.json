@@ -72,6 +72,7 @@
         "concepts": "cpp",
         "numeric": "cpp",
         "algorithm": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "regex": "cpp"
     }
 }

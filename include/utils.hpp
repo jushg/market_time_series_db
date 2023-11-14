@@ -1,3 +1,6 @@
+#ifndef UTIL_HPP
+#define UTIL_HPP
+
 #include <string>
 #include <stdint.h>
 #include <iostream>
@@ -6,8 +9,9 @@
 
 constexpr uint64_t PERIOD = 1200000000000;
 
-bool isSamePeriod(uint64_t startTimestamp, uint64_t curTimestamp) {
-    return curTimestamp - startTimestamp <= PERIOD;
+bool isSamePeriod(uint64_t t1, uint64_t t2) {
+    if(t1 < 0 || t2 < 0) return false;
+    return abs((long long)(t1 - t2)) <= PERIOD;
 }
 
 struct QueryResult {
@@ -27,3 +31,5 @@ struct QueryResult {
         std::cout << symbol << ", " << timestamp << ", ";
     }
 };
+
+#endif

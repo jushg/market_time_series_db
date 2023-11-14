@@ -1,3 +1,6 @@
+#ifndef MODEL_HPP
+#define MODEL_HPP
+
 #include <unordered_map>
 #include <map>
 #include <stdint.h>
@@ -48,6 +51,7 @@ namespace model {
     public:
         OrderBook(){}
         OrderBook(SideRecords& records): records(records)  {}
+        OrderBook(SideRecords&& records): records(records)  {}
 
         void add(OrderData newOrder);
 
@@ -55,6 +59,6 @@ namespace model {
 
         SideRecords getSideRecords(); 
     };
-
-
 }
+
+#endif

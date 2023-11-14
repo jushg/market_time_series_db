@@ -1,8 +1,8 @@
 #include "../../include/commands.hpp"
 
-void QuerySingleCommand::execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx)  {
+void QuerySingleCommand::execute()  {
     storage::Reader reader = storage::Reader();
-    auto fileName = storage::getSymbolDirectory(rootDir, symbol) + "/" + std::to_string(timestamp);
+    auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timestamp);
 
     reader.loadData(fileName);
     auto baseRecords = reader.getRecords();
@@ -19,6 +19,6 @@ void QuerySingleCommand::execute(std::string& rootDir, std::string& symbol, std:
         }
     }
 
-    QueryResult result(symbol, timestamp, lastTrade.qty, lastTrade.price, book);
+    QueryResult result(config.symbol, timestamp, lastTrade.qty, lastTrade.price, book);
     result.printResult();
 }

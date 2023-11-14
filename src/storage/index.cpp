@@ -5,6 +5,7 @@
 storage::TimeIndex::TimeIndex(std::string& symbol, std::string& rootDir): symbol(symbol), rootDir(rootDir) {
     storage::createSymbolDirectoryIfNotExist(rootDir, symbol);
     idxFilePath = storage::getSymbolDirectory(rootDir, symbol) + "/idx.dat";
+    loadIdx();
 }
 
     
@@ -23,7 +24,7 @@ void storage::TimeIndex::loadIdx() {
     }
 }
 
-void storage::TimeIndex::buildIdxWithFile() {
+void storage::TimeIndex::reloadIdxFromFile() {
 
 }
 

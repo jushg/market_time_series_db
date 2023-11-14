@@ -1,7 +1,5 @@
 #include "../../include/storages.hpp"
 
-
-
 std:: string storage::getSymbolDirectory(const std::string& rootDir, const std::string& symbol) {
     return rootDir + "/" + symbol;
 }

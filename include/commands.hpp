@@ -1,26 +1,34 @@
+#ifndef COMMAND_HPP
+#define COMMAND_HPP
+
 #include <string>
 #include <memory>
 #include <sstream>
 #include "./storages.hpp"
 #include "./models.hpp"
 #include "./utils.hpp"
+#include "./shared.hpp" 
 
 class BaseCommand {
 public:
-    virtual void execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx);
+    virtual void execute();
 };
 
 class InsertEntryCommand: public BaseCommand {
+    model::OrderData newEntry;
 public:
-    void execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx) override ;
+    CommonConfig config;
+    InsertEntryCommand(model::OrderData &&newEntry, CommonConfig&& config): newEntry(newEntry), config(config) {}
+    void execute() override ;
 };
 
-class InsertFileCommand: public BaseCommand {
+class LoadFileCommand: public BaseCommand {
     std::string inputFile;
     model::OrderData parseInputToOrderData(std::string& inputLine);
 public:
-    InsertFileCommand(std::string&  fileName): inputFile(fileName) {}
-    void execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx) override ;
+    CommonConfig config;
+    LoadFileCommand(std::string&  fileName, CommonConfig&& config): inputFile(fileName), config(config) {}
+    void execute() override ;
 };
 
 
@@ -29,15 +37,19 @@ class QueryRangeCommand: public BaseCommand {
     uint64_t endTime;
     uint64_t granularity;
 public:
-    QueryRangeCommand(uint64_t startTime, uint64_t endTime, uint64_t granularity): 
-        startTime(startTime), endTime(endTime), granularity(granularity) {}
-    void execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx) override ;
+    CommonConfig config;
+    QueryRangeCommand(uint64_t startTime, uint64_t endTime, uint64_t granularity, CommonConfig&& config): 
+        startTime(startTime), endTime(endTime), granularity(granularity),  config(config) {}
+    void execute() override ;
 };
 
 
 class QuerySingleCommand: public BaseCommand {
     uint64_t timestamp;
 public:
-    QuerySingleCommand(uint64_t timestamp): timestamp(timestamp) {}
-    void execute(std::string& rootDir, std::string& symbol, std::shared_ptr<storage::TimeIndex> timeIdx) override ;
+    CommonConfig config;
+    QuerySingleCommand(uint64_t timestamp, CommonConfig&& config): timestamp(timestamp), config(config) {}
+    void execute() override ;
 };
+
+#endif
