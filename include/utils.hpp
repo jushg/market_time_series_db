@@ -7,15 +7,15 @@
 #include <vector>
 #include "./models.hpp"
 
-constexpr uint64_t PERIOD = 1200000000000;
+constexpr uint64_t PERIOD = 1200000000000; // 20 minutes
 
-bool isSamePeriod(uint64_t t1, uint64_t t2) {
+inline bool isSamePeriod(uint64_t t1, uint64_t t2) {
     if(t1 < 0 || t2 < 0) return false;
     return abs((long long)(t1 - t2)) <= PERIOD;
 }
 
 struct QueryResult {
-    model::Symbol symbol;
+    std::string symbol;
     uint64_t timestamp;
     uint64_t lastTradeQty;
     double lastTradePrice;

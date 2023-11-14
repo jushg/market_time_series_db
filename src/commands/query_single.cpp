@@ -6,7 +6,7 @@ void QuerySingleCommand::execute()  {
 
     reader.loadData(fileName);
     auto baseRecords = reader.getRecords();
-    auto orders = reader.getOrders();
+    auto orders = reader.getOrders(config.symbol);
     auto lastTrade = reader.getLastTrade();
     model::OrderBook book(baseRecords);
     for(auto order: orders) {
