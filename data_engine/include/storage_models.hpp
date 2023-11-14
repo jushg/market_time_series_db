@@ -25,8 +25,8 @@ namespace storage_model {
     struct OrderRecord {
         uint64_t timestamp;
         uint64_t id;
-        char category;
         char side;
+        char category;
         uint64_t qty;
         double price;
         OrderRecord(){}

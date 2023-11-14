@@ -11,13 +11,23 @@
 
 class BaseCommand {
 public:
-    virtual void execute();
+    BaseCommand() = default;
+    virtual ~BaseCommand() = default;
+    virtual void execute() {};
+};
+
+
+class ExitCommand: public BaseCommand {
+public:
+    void execute() override {
+        std::cout << "To exit";
+    };
 };
 
 class InsertEntryCommand: public BaseCommand {
     model::OrderData newEntry;
-public:
     CommonConfig config;
+public:
     InsertEntryCommand(model::OrderData &&newEntry, CommonConfig&& config): newEntry(newEntry), config(config) {}
     void execute() override ;
 };
@@ -25,8 +35,8 @@ public:
 class LoadFileCommand: public BaseCommand {
     std::string inputFile;
     model::OrderData parseInputToOrderData(std::string& inputLine);
-public:
     CommonConfig config;
+public:
     LoadFileCommand(std::string&  fileName, CommonConfig&& config): inputFile(fileName), config(config) {}
     void execute() override ;
 };
@@ -36,8 +46,8 @@ class QueryRangeCommand: public BaseCommand {
     uint64_t startTime;
     uint64_t endTime;
     uint64_t granularity;
-public:
     CommonConfig config;
+public:
     QueryRangeCommand(uint64_t startTime, uint64_t endTime, uint64_t granularity, CommonConfig&& config): 
         startTime(startTime), endTime(endTime), granularity(granularity),  config(config) {}
     void execute() override ;
@@ -46,8 +56,8 @@ public:
 
 class QuerySingleCommand: public BaseCommand {
     uint64_t timestamp;
-public:
     CommonConfig config;
+public:
     QuerySingleCommand(uint64_t timestamp, CommonConfig&& config): timestamp(timestamp), config(config) {}
     void execute() override ;
 };

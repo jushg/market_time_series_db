@@ -26,20 +26,20 @@ void mergeStateAndWrite(CommonConfig& config, uint64_t start, uint64_t end, std:
     size_t idxOrderToMerge = 0;
     size_t idxTimePeriods = 0;
 
-    for(idxOrderToMerge = 0; idxOrderToMerge < orderToMerge.size(); idxOrderToMerge++) {
+    // for(idxOrderToMerge = 0; idxOrderToMerge < orderToMerge.size(); idxOrderToMerge++) {
        
-    }
+    // }
 
-    if(idxOrderToMerge <)
+    // if(idxOrderToMerge <)
 
-    while(idxNewOrder < currentOrders.size() && idxOldOrder < timePeriods.size()) {
-        auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timePeriods[idxOldOrder]);
-        reader.loadData(fileName);
-        auto orders = reader.getOrders(config.symbol);
-        storage::deleteDataAt(fileName);
+    // while(idxNewOrder < currentOrders.size() && idxOldOrder < timePeriods.size()) {
+    //     auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timePeriods[idxOldOrder]);
+    //     reader.loadData(fileName);
+    //     auto orders = reader.getOrders(config.symbol);
+    //     storage::deleteDataAt(fileName);
 
         
-    }
+    // }
 
 
 
