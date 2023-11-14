@@ -15,24 +15,24 @@ void storage::Reader::loadData(const std::string& fileName) {
     sellRecords.clear();
     handler.read((char *)&metadata, sizeof(storage_model::Metadata));
 
+    std::cout << metadata.buyCnt << " " << metadata.orderCnt << " "<< metadata.sellCnt;
+
     buyRecords.resize(metadata.buyCnt);
     sellRecords.resize(metadata.sellCnt);
     orders.resize(metadata.orderCnt);
 
     handler.read((char *)&lastTrade, sizeof(storage_model::LastTradeRecord));
+
     for(size_t i = 0 ; i < metadata.buyCnt;i++) {
-        storage_model::BaseStateRecord record;
-        handler.read((char *)&record, sizeof(storage_model::BaseStateRecord));
+        handler.read((char *)&buyRecords[i], sizeof(storage_model::BaseStateRecord));
     }
 
     for(size_t i = 0 ; i < metadata.sellCnt;i++) {
-        storage_model::BaseStateRecord record;
-        handler.read((char *)&record, sizeof(storage_model::BaseStateRecord));
+        handler.read((char *)&sellRecords[i], sizeof(storage_model::BaseStateRecord));
     }
 
     for(size_t i = 0 ; i < metadata.orderCnt;i++) {
-        storage_model::OrderRecord order;
-        handler.read((char *)&order, sizeof(storage_model::OrderRecord));
+        handler.read((char *)&orders[i], sizeof(storage_model::OrderRecord));
     }
 }
 

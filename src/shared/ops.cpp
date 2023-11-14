@@ -70,6 +70,10 @@ void writeNewFile( std::string& rootDir, std::string& symbol,  uint64_t startTim
     handler.close();
 }
 
+void swapIfIsTrade(storage_model::LastTradeRecord& lastTrade, model::OrderData& order) {
+    if(order.category == model::Category::TRADE) lastTrade = storage_model::LastTradeRecord(order);
+}
+
 
 
 

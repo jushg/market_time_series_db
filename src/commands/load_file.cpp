@@ -19,6 +19,7 @@ void LoadFileCommand::execute() {
         else if(!isSamePeriod(curPeriodStart, newOrder.timestamp)) {
             if(config.timeIdx->isEmpty()) {
                 writeNewFile(config.rootDir, config.symbol, curPeriodStart, book, curPeriodOrders, lastTrade);
+                book.add(curPeriodOrders);
             } else {
                 mergeStateAndWrite(config, curPeriodStart, curPeriodStart + PERIOD, curPeriodOrders);
                 book = getOrderBookSnapshot(config, newOrder.timestamp);
@@ -26,6 +27,7 @@ void LoadFileCommand::execute() {
             curPeriodStart = newOrder.timestamp;
             curPeriodOrders.clear();
         }
+        swapIfIsTrade(lastTrade, newOrder);
         curPeriodOrders.push_back(std::move(newOrder));
     }
     config.timeIdx->loadIdxFromFile();

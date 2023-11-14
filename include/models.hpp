@@ -62,5 +62,4 @@ namespace model {
         SideRecords getSideRecords(); 
     };
 }
-
 #endif

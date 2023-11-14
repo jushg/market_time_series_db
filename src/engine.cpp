@@ -56,6 +56,12 @@ EngineData initEngine() {
 
 
 
+QueryConfig getQueryConfig(size_t startFrom, std::vector<std::string>& fields) {
+    if(fields[startFrom] == ALL) return QueryConfig();
+    std::vector<std::string> dataFields(fields.begin()+startFrom, fields.end());
+    return QueryConfig(dataFields);
+}
+
 
 bool runCmd(std::string& cmd, EngineData& engineData) {
     std::stringstream stream(cmd);
@@ -96,14 +102,25 @@ bool runCmd(std::string& cmd, EngineData& engineData) {
         //FROM <symbol> AT <epoch> QUERY <data>
         if(fields[2] == AT) {
             auto timestamp = std::stoull(fields[3]);
-            auto cmd = QuerySingleCommand(timestamp,CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)});
+
+            auto cmd = QuerySingleCommand(
+                timestamp,
+                CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)},
+                getQueryConfig(5,fields)
+            );
             cmd.execute();
         // FROM <symbol> RANGE <start> <end> <granularity> QUERY <data>
         } else if(fields[2] == RANGE) {
             auto start = std::stoull(fields[3]);
             auto end = std::stoull(fields[4]);
-            auto gra = std::stoull(fields[4]);
-            auto cmd = QueryRangeCommand(start,end, gra,CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)});
+            auto gra = std::stoull(fields[5]);
+            auto cmd = QueryRangeCommand(
+                start,
+                end, 
+                gra,
+                CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)},
+                getQueryConfig(7,fields)
+            );
             cmd.execute();
         }
     } else if(fields[0] == FROM_QUERY_MULTIPLE) {
@@ -115,7 +132,11 @@ bool runCmd(std::string& cmd, EngineData& engineData) {
         if(fields[idx] == AT) {
             auto timestamp = std::stoull(fields[idx+1]);
             for(auto symbol: symbols) {
-                auto cmd = QuerySingleCommand(timestamp,CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)});
+                auto cmd = QuerySingleCommand(
+                            timestamp,
+                            CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)},
+                            getQueryConfig(idx+3,fields)
+                        );
                 cmd.execute();
             }
 
@@ -126,11 +147,12 @@ bool runCmd(std::string& cmd, EngineData& engineData) {
             auto gra = std::stoull(fields[idx+3]);
             for(auto symbol: symbols) {
                 auto cmd = QueryRangeCommand(
-                    start, 
-                    end, 
-                    gra,
-                    CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)}
-                );
+                                start, 
+                                end, 
+                                gra,
+                                CommonConfig{engineData.rootDir,symbol, engineData.findIdx(symbol)},
+                                 getQueryConfig(idx+5,fields)
+                            );
                 cmd.execute();
             }
         }

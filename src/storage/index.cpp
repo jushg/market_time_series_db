@@ -67,7 +67,6 @@ std::vector<uint64_t> storage::TimeIndex::findIndexesCoverRange(const uint64_t s
         iterStart = next(iterStart);
     }
     ans.push_back(*iterStart);
-    for(auto i: ans) std::cout << i << " ";
     return ans;
 }
 

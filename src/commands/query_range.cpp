@@ -1,14 +1,19 @@
 #include "../../include/commands.hpp"
 
 void QueryRangeCommand::execute() {
-
+    if(config.timeIdx->isEmpty()) {
+        QueryResult::printEmptyQuery();
+        return;
+    }
     if(startTime > endTime) {
-        std:: cout << "Not Valid"<<std::endl;
+        QueryResult::printInvalidQuery();
         return;
     }
     storage::Reader reader = storage::Reader();
     auto timeRangeStarts = config.timeIdx->findIndexesCoverRange(startTime,endTime);
     if(timeRangeStarts.empty()) return;
+
+    queryConfig.printReturnFormat();
     uint64_t curTime = startTime;
 
     for(int i = 0; i < timeRangeStarts.size(); i++) {
@@ -24,21 +29,17 @@ void QueryRangeCommand::execute() {
         for(auto order: orders) {
             if(order.timestamp > curTime) {
                 QueryResult result(config.symbol, curTime, lastTrade.qty, lastTrade.price, book);
-                result.printResult();
+                result.printResult(queryConfig);
                 curTime += granularity;
             }
             if(curTime > endTime) break;
             book.add(order);
-            if(order.category == model::Category::TRADE) {
-                lastTrade.price = order.price;
-                lastTrade.qty = order.qty;
-                lastTrade.timestamp = order.timestamp;
-            }
+            swapIfIsTrade(lastTrade, order);
         }
 
         if(i == timeRangeStarts.size() - 1 && curTime <= endTime) {
             QueryResult result(config.symbol, curTime, lastTrade.qty, lastTrade.price, book);
-            result.printResult();
+            result.printResult(queryConfig);
         }
     }
 }

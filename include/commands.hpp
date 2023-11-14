@@ -6,7 +6,6 @@
 #include <sstream>
 #include "./storages.hpp"
 #include "./models.hpp"
-#include "./utils.hpp"
 #include "./shared.hpp" 
 
 class BaseCommand {
@@ -46,9 +45,10 @@ class QueryRangeCommand: public BaseCommand {
     uint64_t endTime;
     uint64_t granularity;
     CommonConfig config;
+    QueryConfig queryConfig;
 public:
-    QueryRangeCommand(uint64_t startTime, uint64_t endTime, uint64_t granularity, CommonConfig&& config): 
-        startTime(startTime), endTime(endTime), granularity(granularity),  config(config) {}
+    QueryRangeCommand(uint64_t startTime, uint64_t endTime, uint64_t granularity, CommonConfig&& config, QueryConfig&& queryConfig): 
+        startTime(startTime), endTime(endTime), granularity(granularity),  config(config), queryConfig(queryConfig) {}
     void execute() override ;
 };
 
@@ -56,9 +56,10 @@ public:
 class QuerySingleCommand: public BaseCommand {
     uint64_t timestamp;
     CommonConfig config;
+    QueryConfig queryConfig;
 public:
-    QuerySingleCommand(uint64_t timestamp, CommonConfig&& config): timestamp(timestamp), config(config) {}
+    QuerySingleCommand(uint64_t timestamp, CommonConfig&& config,  QueryConfig&& queryConfig): 
+        timestamp(timestamp), config(config), queryConfig(queryConfig) {}
     void execute() override ;
 };
-
 #endif

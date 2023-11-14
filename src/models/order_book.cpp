@@ -12,7 +12,7 @@ void model::OrderBook::add(model::OrderData newOrder) {
     switch (newOrder.category)
     {
     case model::Category::NEW:
-        update(newOrder.side,newOrder.qty, newOrder.price);
+        update(newOrder.side, newOrder.qty, newOrder.price);
         break;
     case model::Category::TRADE:
         update(newOrder.side,(-1) * newOrder.qty, newOrder.price);
@@ -30,12 +30,20 @@ void model::OrderBook::add(model::OrderData newOrder) {
 
 std::vector<std::pair<double,uint64_t>> model::OrderBook::getTop(model::Side side, size_t topN) {
     std::vector<std::pair<double,uint64_t>> ans;
-    for(auto [k,v]: records[side]) {
-        if(v >0 ) {
-            ans.push_back({k,v});
-            topN--;
+    if(side == model::Side::BUY) {
+        for(auto iter = records[side].rbegin(); iter != records[side].rend(); iter++) {
+            if(iter->second >0) {
+                ans.push_back({iter->first, iter->second});
+            }
+            if(ans.size() == topN) return ans;
         }
-        if(topN == 0) return ans;
+    } else {
+        for(auto iter = records[side].begin(); iter != records[side].end(); iter++) {
+            if(iter->second >0) {
+                ans.push_back({iter->first, iter->second});
+            }
+            if(ans.size() == topN) return ans;
+        }
     }
     return ans;
 }
