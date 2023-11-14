@@ -13,15 +13,14 @@ class BaseCommand {
 public:
     BaseCommand() = default;
     virtual ~BaseCommand() = default;
-    virtual void execute() {};
+    virtual void execute() = 0;
 };
 
 
-class ExitCommand: public BaseCommand {
+class NukeDataCommand: public BaseCommand {
 public:
-    void execute() override {
-        std::cout << "To exit";
-    };
+    void execute() override {};
+    void execute(std::string& rootDir);
 };
 
 class InsertEntryCommand: public BaseCommand {

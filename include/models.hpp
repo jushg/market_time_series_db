@@ -55,6 +55,7 @@ namespace model {
         OrderBook(SideRecords&& records): records(records)  {}
 
         void add(OrderData newOrder);
+        void add(std::vector<OrderData>& newOrders);
 
         std::vector<std::pair<double,uint64_t>> getTop(Side side, size_t topN);
 

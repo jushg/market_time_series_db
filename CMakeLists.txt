@@ -7,7 +7,7 @@ file(GLOB SOURCES
     "./include*.hpp"
     "./src/commands/*.cpp"
     "./src/models/*.cpp"
-    "./src/share/*.cpp"
+    "./src/shared/*.cpp"
     "./src/storage/*.cpp"
     "./src/*.cpp"
 )

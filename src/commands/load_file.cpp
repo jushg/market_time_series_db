@@ -8,6 +8,7 @@ void LoadFileCommand::execute() {
     std::string symbol;
     std::vector<model::OrderData> curPeriodOrders;
     storage_model::LastTradeRecord lastTrade;
+
     while (std::getline(handler, line)) {
         auto newOrder = parseInputToOrderData(line);
         if (curPeriodStart == -1) {
@@ -16,10 +17,8 @@ void LoadFileCommand::execute() {
         }
 
         else if(!isSamePeriod(curPeriodStart, newOrder.timestamp)) {
-            if(config.timeIdx->findNearestIndexAfter(curPeriodStart) == -1) {
-                auto fileName = storage::getSymbolDirectory(config.rootDir, symbol) + "/" + std::to_string(curPeriodStart);
-                std::ofstream handler(fileName, std::ios::out | std::ios::binary);
-                storage::write(handler, book, curPeriodOrders, lastTrade);
+            if(config.timeIdx->isEmpty()) {
+                writeNewFile(config.rootDir, config.symbol, curPeriodStart, book, curPeriodOrders, lastTrade);
             } else {
                 mergeStateAndWrite(config, curPeriodStart, curPeriodStart + PERIOD, curPeriodOrders);
                 book = getOrderBookSnapshot(config, newOrder.timestamp);
@@ -28,8 +27,8 @@ void LoadFileCommand::execute() {
             curPeriodOrders.clear();
         }
         curPeriodOrders.push_back(std::move(newOrder));
-
     }
+    config.timeIdx->loadIdxFromFile();
 }
 
 model::OrderData LoadFileCommand::parseInputToOrderData(std::string& inputLine) {

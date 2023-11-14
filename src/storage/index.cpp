@@ -1,17 +1,20 @@
 #include "../../include/storages.hpp"
 
-
-
 storage::TimeIndex::TimeIndex(std::string& symbol, std::string& rootDir): symbol(symbol), rootDir(rootDir) {
     storage::createSymbolDirectoryIfNotExist(rootDir, symbol);
     idxFilePath = storage::getSymbolDirectory(rootDir, symbol) + "/idx.dat";
     loadIdx();
 }
 
-    
-void storage::TimeIndex::loadIdx() {
-    if (!std::filesystem::exists(idxFilePath)) return;
+storage::TimeIndex::~TimeIndex(){
+    buildIdxFromData();
+}
 
+void storage::TimeIndex::loadIdx() {
+    if (!std::filesystem::exists(idxFilePath)) {
+        loadIdxFromFile();
+        return;
+    }
     std::ifstream handler(idxFilePath, std::ios::in | std::ios::binary);
 
     uint64_t idxCnt;
@@ -22,10 +25,17 @@ void storage::TimeIndex::loadIdx() {
         handler.read((char *)&idxData, sizeof(uint64_t));
         idxes.insert(idxData);
     }
+    handler.close();
 }
 
-void storage::TimeIndex::reloadIdxFromFile() {
-
+void storage::TimeIndex::loadIdxFromFile() {
+    std::vector<uint64_t> timestamps;
+    for (auto const& dir_entry : std::filesystem::directory_iterator{ getSymbolDirectory(rootDir, symbol) }) {
+        uint64_t fileStartTime = std::stoll(dir_entry.path().filename());
+        timestamps.push_back(fileStartTime);
+    }
+    idxes.clear();
+    idxes = std::set(timestamps.begin(), timestamps.end());
 }
 
 void storage::TimeIndex::buildIdxFromData() {
@@ -36,6 +46,7 @@ void storage::TimeIndex::buildIdxFromData() {
     for (auto idxData: idxes) {
         handler.write((char *)&idxData, sizeof(uint64_t));
     }
+    handler.close();
 }
 
 
@@ -43,7 +54,7 @@ bool storage::TimeIndex::isEmpty() {
     return idxes.empty();
 }
 
-std::vector<uint64_t> storage::TimeIndex::findIndexesInRange(const uint64_t startTime, const uint64_t endTime){
+std::vector<uint64_t> storage::TimeIndex::findIndexesCoverRange(const uint64_t startTime, const uint64_t endTime){
     std::vector<uint64_t> ans;
     auto iterStart = idxes.lower_bound(startTime);
     if(iterStart != idxes.begin() && *iterStart != startTime) iterStart--;
@@ -51,11 +62,12 @@ std::vector<uint64_t> storage::TimeIndex::findIndexesInRange(const uint64_t star
     auto iterEnd = idxes.lower_bound(endTime);
     if(iterEnd == idxes.end()) iterEnd--;
 
-    while(1){
+    while(iterStart != iterEnd){
         ans.push_back(*iterStart);
-        if(iterStart == iterEnd) break;
-        iterStart++;
+        iterStart = next(iterStart);
     }
+    ans.push_back(*iterStart);
+    for(auto i: ans) std::cout << i << " ";
     return ans;
 }
 
@@ -69,8 +81,7 @@ uint64_t storage::TimeIndex::findNearestIndexPrior(const uint64_t time) {
     auto iter = idxes.lower_bound(time);
     if(*iter == time) return time;
     if(iter == idxes.begin())return -1;
-    iter--;
-    return *iter;
+    return *prev(iter);
 }
 
 

@@ -1,6 +1,12 @@
 #include "../../include/storages.hpp"
 
 void storage::Reader::loadData(const std::string& fileName) {
+
+    if (!std::filesystem::exists(fileName)) {
+        std::cout << "File "+fileName + " not existed" <<"\n";
+        return;
+    }
+
     std::ifstream handler(fileName, std::ios::in | std::ios::binary);
 
     storage_model::Metadata metadata;

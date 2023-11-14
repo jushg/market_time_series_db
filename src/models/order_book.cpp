@@ -2,9 +2,10 @@
 
 void model::OrderBook::update (model::Side side, u_int64_t qty, double price) {
     records[side][price] += qty;
+}
 
-    // DEBUG mode
-    assert(records[side][price] >= 0);
+void model::OrderBook::add(std::vector<model::OrderData>& newOrders) {
+    for(auto order: newOrders) add(order);
 }
 
 void model::OrderBook::add(model::OrderData newOrder) {

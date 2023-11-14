@@ -6,8 +6,8 @@
 #include <iostream>
 #include <vector>
 #include "./models.hpp"
-
-constexpr uint64_t PERIOD = 1200000000000; // 20 minutes
+constexpr uint64_t MIN = 10; // 10 minutes
+constexpr uint64_t PERIOD = 60000000000 * MIN; 
 
 inline bool isSamePeriod(uint64_t t1, uint64_t t2) {
     if(t1 < 0 || t2 < 0) return false;

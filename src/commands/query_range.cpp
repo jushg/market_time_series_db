@@ -1,14 +1,19 @@
 #include "../../include/commands.hpp"
 
 void QueryRangeCommand::execute() {
+
+    if(startTime > endTime) {
+        std:: cout << "Not Valid"<<std::endl;
+        return;
+    }
     storage::Reader reader = storage::Reader();
-    auto timeRangeStarts = config.timeIdx->findIndexesInRange(startTime,endTime);
+    auto timeRangeStarts = config.timeIdx->findIndexesCoverRange(startTime,endTime);
     if(timeRangeStarts.empty()) return;
     uint64_t curTime = startTime;
 
     for(int i = 0; i < timeRangeStarts.size(); i++) {
 
-        auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timeRangeStarts[i]);
+        auto fileName = storage::getFileName(config.rootDir, config.symbol, timeRangeStarts[i]);
 
         reader.loadData(fileName);
         auto baseRecords = reader.getRecords();

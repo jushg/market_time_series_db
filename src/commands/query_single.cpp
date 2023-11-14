@@ -2,8 +2,9 @@
 
 void QuerySingleCommand::execute()  {
     storage::Reader reader = storage::Reader();
-    auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timestamp);
-
+    auto nearestTimestamp = config.timeIdx->findNearestIndexPrior(timestamp);
+    auto fileName = storage::getFileName(config.rootDir, config.symbol, nearestTimestamp);
+    
     reader.loadData(fileName);
     auto baseRecords = reader.getRecords();
     auto orders = reader.getOrders(config.symbol);

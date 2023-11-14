@@ -18,16 +18,18 @@ namespace storage {
         std::string rootDir;
     public:
         TimeIndex(std::string& symbol, std::string& rootDir);
+        ~TimeIndex();
         void loadIdx();
-        void reloadIdxFromFile() ;
+        void loadIdxFromFile() ;
         void buildIdxFromData() ;
         bool isEmpty() ;
-        std::vector<uint64_t> findIndexesInRange(const uint64_t startTime, const uint64_t endTime);
+        std::vector<uint64_t> findIndexesCoverRange(const uint64_t startTime, const uint64_t endTime);
         uint64_t findNearestIndexAfter(const uint64_t time);
         uint64_t findNearestIndexPrior(const uint64_t time) ;
     };
 
-    std:: string getSymbolDirectory(const std::string& rootDir, const std::string& symbol) ;
+    std::string getSymbolDirectory(const std::string& rootDir, const std::string& symbol) ;
+    std::string getFileName(const std::string& rootDir, const std::string& symbol, uint64_t time);
     void createSymbolDirectoryIfNotExist(const std::string& rootDir, const std::string& symbol);
 
     class Reader {
