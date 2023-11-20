@@ -10,16 +10,14 @@
 
 class BaseCommand {
 public:
-    BaseCommand() = default;
-    virtual ~BaseCommand() = default;
     virtual void execute() = 0;
 };
 
-
 class NukeDataCommand: public BaseCommand {
+    std::string& rootDir;
 public:
-    void execute() override {};
-    void execute(std::string& rootDir);
+    NukeDataCommand(std::string& rootDir): rootDir(rootDir) {}
+    void execute() override;
 };
 
 class InsertEntryCommand: public BaseCommand {

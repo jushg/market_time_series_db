@@ -6,12 +6,12 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 file(GLOB SOURCES
     "./include*.hpp"
     "./src/commands/*.cpp"
+    "./src/client/*.cpp"
     "./src/models/*.cpp"
     "./src/shared/*.cpp"
     "./src/storage/*.cpp"
     "./src/*.cpp"
 )
-# file(GLOB TARGET_SRC "./src/*.cpp" )
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
