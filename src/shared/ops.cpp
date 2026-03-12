@@ -20,6 +20,7 @@ model::OrderBook getOrderBookSnapshot(CommonConfig& config, uint64_t timestamp) 
 void mergeStateAndWrite(CommonConfig& config, uint64_t start, uint64_t end, std::vector<model::OrderData>& orderToMerge) {
     storage::Reader reader = storage::Reader();
     std::vector<uint64_t> timePeriods = config.timeIdx->findIndexesCoverRange(start, end);
+    if(timePeriods.empty()) return;
 
     std::vector<model::OrderData> currentOrders;
     model::OrderBook book = getOrderBookSnapshot(config, timePeriods[0]);
@@ -51,7 +52,7 @@ void mergeStateAndWrite(CommonConfig& config, uint64_t start, uint64_t end, std:
         }
     }
 
-    if(idxOrderToMerge < orderToMerge.size() - 1 || !currentOrders.empty()) {
+    if(idxOrderToMerge < orderToMerge.size() || !currentOrders.empty()) {
         while (idxOrderToMerge < orderToMerge.size()) {
             if(orderToMerge[idxOrderToMerge].category == model::Category::TRADE) 
                     lastTrade = storage_model::LastTradeRecord(orderToMerge[idxOrderToMerge]);
