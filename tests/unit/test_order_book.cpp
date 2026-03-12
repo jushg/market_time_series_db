@@ -170,19 +170,13 @@ TEST(OrderBookTest, AddVectorOfOrders) {
 }
 
 // ---------------------------------------------------------------------------
-// Bug regression: TRADE on non-existent price causes unsigned wrap-around.
-// The qty stored becomes a huge value rather than an error being raised.
-// This test documents the current (incorrect) behavior.
+// TRADE on a non-existent price level is a no-op (no underflow).
 // ---------------------------------------------------------------------------
-TEST(OrderBookTest, DISABLED_TradeNonExistentPriceUnderflowsDueToUnsignedWrap) {
+TEST(OrderBookTest, TradeNonExistentPriceIsNoOp) {
     OrderBook book;
-    // TRADE on a price level that was never seeded with a NEW order
     book.add(tradeOrder(Side::BUY, 99.0, 10));
     auto top = book.getTop(Side::BUY, 5);
-    // After fix this should be EXPECT_TRUE(top.empty())
-    // Currently the qty wraps to a huge positive value, so there IS an entry
-    ASSERT_EQ(top.size(), 1u);
-    EXPECT_GT(top[0].second, 0u);  // corrupted: huge qty, not 0 or negative
+    EXPECT_TRUE(top.empty());
 }
 
 // ---------------------------------------------------------------------------

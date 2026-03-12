@@ -1,6 +1,6 @@
 #include "../../include/models.hpp"
 
-void model::OrderBook::update (model::Side side, u_int64_t qty, double price) {
+void model::OrderBook::update (model::Side side, uint64_t qty, double price) {
     records[side][price] += qty;
 }
 
@@ -15,11 +15,13 @@ void model::OrderBook::add(model::OrderData newOrder) {
         update(newOrder.side, newOrder.qty, newOrder.price);
         break;
     case model::Category::TRADE:
-        update(newOrder.side,(-1) * newOrder.qty, newOrder.price);
+        if(records[newOrder.side].count(newOrder.price))
+            update(newOrder.side,(-1) * newOrder.qty, newOrder.price);
         break;
 
     case model::Category::CANCEL:
-        update(newOrder.side,(-1) * newOrder.qty, newOrder.price);
+        if(records[newOrder.side].count(newOrder.price))
+            update(newOrder.side,(-1) * newOrder.qty, newOrder.price);
         break;
 
     default:
