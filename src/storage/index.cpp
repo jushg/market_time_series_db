@@ -56,6 +56,7 @@ bool storage::TimeIndex::isEmpty() {
 
 std::vector<uint64_t> storage::TimeIndex::findIndexesCoverRange(const uint64_t startTime, const uint64_t endTime){
     std::vector<uint64_t> ans;
+    if(idxes.empty()) return ans;
     auto iterStart = idxes.lower_bound(startTime);
     if(iterStart != idxes.begin() && *iterStart != startTime) iterStart--;
 
@@ -78,8 +79,8 @@ uint64_t storage::TimeIndex::findNearestIndexAfter(const uint64_t time){
 
 uint64_t storage::TimeIndex::findNearestIndexPrior(const uint64_t time) {
     auto iter = idxes.lower_bound(time);
-    if(*iter == time) return time;
-    if(iter == idxes.begin())return -1;
+    if(iter != idxes.end() && *iter == time) return time;
+    if(iter == idxes.begin()) return -1;
     return *prev(iter);
 }
 
