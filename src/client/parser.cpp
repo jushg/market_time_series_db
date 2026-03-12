@@ -88,7 +88,7 @@ bool parseAndExecute(std::string& cmd, EngineData& engineData) {
             }
 
         // FROM_MULTIPLE <symbol_1> <symbol_2> ... <symbol_n> RANGE <start> <end> <granularity> QUERY <data>
-        } else if(fields[2] == RANGE) {
+        } else if(fields[idx] == RANGE) {
             auto start = std::stoull(fields[idx+1]);
             auto end = std::stoull(fields[idx+2]);
             auto gra = std::stoull(fields[idx+3]);
