@@ -70,7 +70,7 @@ void QueryResult::printResult(QueryConfig& config){
         if(lastTradePrice < 0) std::cout << "N.A";
         else std::cout << lastTradePrice;
         std::cout << "@";
-        if(lastTradeQty < 0) std::cout << "N.A ";
+        if(lastTradeQty == static_cast<uint64_t>(-1)) std::cout << "N.A ";
         else std::cout << lastTradeQty;
     }
     std::cout << "\n";
