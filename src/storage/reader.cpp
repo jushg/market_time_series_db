@@ -15,7 +15,6 @@ void storage::Reader::loadData(const std::string& fileName) {
     sellRecords.clear();
     handler.read((char *)&metadata, sizeof(storage_model::Metadata));
 
-    std::cout << metadata.buyCnt << " " << metadata.orderCnt << " "<< metadata.sellCnt;
 
     buyRecords.resize(metadata.buyCnt);
     sellRecords.resize(metadata.sellCnt);
