@@ -47,7 +47,7 @@ namespace model {
     class OrderBook {
     private:
         SideRecords records;
-        void update (Side side, u_int64_t qty, double price);
+        void update (Side side, uint64_t qty, double price);
 
     public:
         OrderBook(){}
