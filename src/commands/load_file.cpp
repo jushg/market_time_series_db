@@ -30,6 +30,14 @@ void LoadFileCommand::execute() {
         swapIfIsTrade(lastTrade, newOrder);
         curPeriodOrders.push_back(std::move(newOrder));
     }
+
+    if(!curPeriodOrders.empty()) {
+        if(config.timeIdx->isEmpty()) {
+            writeNewFile(config.rootDir, config.symbol, curPeriodStart, book, curPeriodOrders, lastTrade);
+        } else {
+            mergeStateAndWrite(config, curPeriodStart, curPeriodStart + PERIOD, curPeriodOrders);
+        }
+    }
     config.timeIdx->loadIdxFromFile();
 }
 

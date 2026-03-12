@@ -53,24 +53,18 @@ protected:
 };
 
 // ---------------------------------------------------------------------------
-// NOTE: LoadFileCommand has a known bug — the LAST period's orders are
-// never written to disk (no flush at end of loop). Tests below account for
-// this: for a file with orders only in period 1, nothing is written.
-// For a file spanning 2 periods, only period 1 is written.
+// Single-period file: data is written after flush at end of loop
 // ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Single-period file: nothing written (last-period flush bug)
-// ---------------------------------------------------------------------------
-TEST_F(LoadFileTest, DISABLED_SinglePeriodFileWritesData) {
-    // This test documents the bug: LoadFileCommand never writes the last period.
-    // After the bug is fixed (a flush after the while-loop), this should pass.
+TEST_F(LoadFileTest, SinglePeriodFileWritesData) {
     writeInputFile({
         makeOrderLine(T1,   1, symbol, "BUY", "NEW", 50.0, 100),
         makeOrderLine(T1+1, 2, symbol, "BUY", "NEW", 51.0, 200),
     });
     runLoad();
-    EXPECT_FALSE(timeIdx->isEmpty());  // currently fails: timeIdx IS empty
+    EXPECT_FALSE(timeIdx->isEmpty());
+    auto out = captureQuery(T1 + 1);
+    EXPECT_NE(out.find("50"), std::string::npos);
+    EXPECT_NE(out.find("51"), std::string::npos);
 }
 
 // ---------------------------------------------------------------------------
@@ -91,17 +85,14 @@ TEST_F(LoadFileTest, TwoPeriodFileWritesPeriod1) {
     EXPECT_NE(out.find("55"), std::string::npos);
 }
 
-TEST_F(LoadFileTest, DISABLED_TwoPeriodFileWritesBothPeriods) {
-    // Period 2 is NOT written due to the last-period flush bug.
-    // After the bug is fixed, this test should pass.
+TEST_F(LoadFileTest, TwoPeriodFileWritesBothPeriods) {
     writeInputFile({
         makeOrderLine(T1, 1, symbol, "BUY", "NEW", 50.0, 100),
         makeOrderLine(T2, 2, symbol, "BUY", "NEW", 52.0, 300),
     });
     runLoad();
-    // Query period 2 data
     auto out = captureQuery(T2);
-    EXPECT_NE(out.find("52"), std::string::npos);  // fails currently
+    EXPECT_NE(out.find("52"), std::string::npos);
 }
 
 // ---------------------------------------------------------------------------
