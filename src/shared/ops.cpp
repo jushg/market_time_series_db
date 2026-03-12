@@ -4,7 +4,8 @@ model::OrderBook getOrderBookSnapshot(CommonConfig& config, uint64_t timestamp) 
     if(config.timeIdx->isEmpty() || config.timeIdx->findNearestIndexPrior(timestamp) == -1) 
         return model::OrderBook();
     storage::Reader reader = storage::Reader();
-    auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(timestamp);
+    auto nearestTs = config.timeIdx->findNearestIndexPrior(timestamp);
+    auto fileName = storage::getFileName(config.rootDir, config.symbol, nearestTs);
     reader.loadData(fileName);
     auto baseRecords = reader.getRecords();
     auto orders = reader.getOrders(config.symbol);
@@ -28,7 +29,7 @@ void mergeStateAndWrite(CommonConfig& config, uint64_t start, uint64_t end, std:
     size_t idxOrderToMerge = 0;
 
     for(auto startTime: timePeriods) {
-        auto fileName = storage::getSymbolDirectory(config.rootDir, config.symbol) + "/" + std::to_string(startTime);
+        auto fileName = storage::getFileName(config.rootDir, config.symbol, startTime);
         reader.loadData(fileName);
         auto loadedOrders = reader.getOrders(config.symbol);
         storage::deleteDataAt(fileName);
