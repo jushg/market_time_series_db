@@ -29,8 +29,7 @@ constexpr uint64_t PERIOD = 60000000000 * MINUTES;
 constexpr int numOrderToHold = 5;
 
 inline bool isSamePeriod(uint64_t t1, uint64_t t2) {
-    if(t1 < 0 || t2 < 0) return false;
-    return abs((long long)(t1 - t2)) <= PERIOD;
+    return (t1 >= t2 ? t1 - t2 : t2 - t1) <= PERIOD;
 }
 
 struct QueryResult {
